@@ -1,5 +1,5 @@
-from django.urls import path  # type: ignore
-from django.views.generic import TemplateView  # type: ignore
+from django.urls import path
+from django.views.generic import TemplateView
 
 app_name = 'pages'
 
@@ -13,10 +13,5 @@ urlpatterns = [
         'rules/',
         TemplateView.as_view(template_name='pages/rules.html'),
         name='rules'
-    ),
-    path(  # zaglush
-        'zaglush',
-        TemplateView.as_view(template_name='pages/zaglush.html'),
-        name='zaglush'
     )
 ]

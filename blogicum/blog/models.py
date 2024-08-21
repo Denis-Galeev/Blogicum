@@ -1,14 +1,11 @@
-from django.contrib.auth import get_user_model  # type: ignore
-from django.db import models  # type: ignore
-from django.urls import reverse  # type: ignore
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.urls import reverse
 
-from .managers import PostManager, PostQuerySet
+from constants import LENGTH_COMMENT_FIELD, MAX_LENGTH_FIELD
+from blog.managers import PostManager, PostQuerySet
 
 User = get_user_model()
-
-MAX_LENGTH_FIELD = 256
-
-LENGTH_COMMENT_FIELD = 30
 
 
 class BaseModel(models.Model):
@@ -118,7 +115,7 @@ class Post(BaseModel):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("blog:post_detail", kwargs={"pk": self.pk})
+        return reverse('blog:post_detail', kwargs={'pk': self.pk})
 
 
 class Comment(BaseModel):

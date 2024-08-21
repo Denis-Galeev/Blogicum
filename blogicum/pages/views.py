@@ -1,4 +1,4 @@
-from django.shortcuts import render  # type: ignore
+from django.shortcuts import render
 
 
 def page_not_found(request, exception):

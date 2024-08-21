@@ -1,9 +1,12 @@
-from django.contrib import admin  # type: ignore
+from django.contrib.admin import ModelAdmin, site
+from django.contrib.admin.decorators import register
+from django.contrib.auth.models import Group
 
-from .models import Category, Comment, Location, Post
+from blog.models import Category, Comment, Location, Post
 
 
-class LocationAdmin(admin.ModelAdmin):
+@register(Location)
+class LocationAdmin(ModelAdmin):
     list_display = ('name', 'is_published', 'created_at',)
     list_editable = ('is_published',)
     search_fields = ('name',)
@@ -11,7 +14,8 @@ class LocationAdmin(admin.ModelAdmin):
     list_display_links = ('name',)
 
 
-class PostAdmin(admin.ModelAdmin):
+@register(Post)
+class PostAdmin(ModelAdmin):
     list_display = (
         'title',
         'author',
@@ -26,7 +30,8 @@ class PostAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
 
 
-class CategoryAdmin(admin.ModelAdmin):
+@register(Category)
+class CategoryAdmin(ModelAdmin):
     list_display = (
         'title',
         'description',
@@ -40,7 +45,8 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display_links = ('title', 'slug')
 
 
-class CommentAdmin(admin.ModelAdmin):
+@register(Comment)
+class CommentAdmin(ModelAdmin):
     list_display = (
         'text',
         'post',
@@ -53,8 +59,5 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('post', 'is_published', 'created_at',)
 
 
-admin.site.empty_value_display = '-- Не задано --'
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Location, LocationAdmin)
-admin.site.register(Post, PostAdmin)
-admin.site.register(Comment, CommentAdmin)
+site.empty_value_display = '-- Не задано --'
+site.unregister(Group)

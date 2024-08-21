@@ -1,15 +1,11 @@
-from django.db.models import Count, Manager, QuerySet  # type: ignore
-from django.utils.timezone import now  # type: ignore
+from django.db.models import Count, Manager, QuerySet
+from django.utils.timezone import now
 
 
 class PostQuerySet(QuerySet):
 
     def with_related_data(self):
-        return self.select_related(
-            'author',
-            'category',
-            'location'
-        )
+        return self.select_related('author', 'category', 'location')
 
     def published(self):
         return self.filter(
@@ -20,7 +16,7 @@ class PostQuerySet(QuerySet):
 
     def comment_count(self):
         return self.annotate(
-            comment_count=Count("comments")
+            comment_count=Count('comments')
         ).order_by('-pub_date')
 
     def by_author(self, author):
@@ -33,43 +29,19 @@ class PostQuerySet(QuerySet):
 class PostManager(Manager):
 
     def get_queryset(self):
-        return (
-            PostQuerySet(self.model)
-            .with_related_data()
-        )
+        return PostQuerySet(self.model).with_related_data()
 
     def get_pub(self):
-        return (
-            self.get_queryset()
-            .published()
-        )
+        return self.get_queryset().published()
 
     def get_for_index(self):
-        return (
-            self.get_queryset()
-            .published()
-            .comment_count()
-        )
+        return self.get_pub().comment_count()
 
     def get_for_category(self, category):
-        return (
-            self.get_queryset()
-            .published()
-            .by_category(category)
-            .comment_count()
-        )
+        return self.get_pub().by_category(category).comment_count()
 
     def get_for_profile(self, author):
-        return (
-            self.get_queryset()
-            .published()
-            .by_author(author)
-            .comment_count()
-        )
+        return self.get_pub().by_author(author).comment_count()
 
     def get_for_profile_auth(self, author):
-        return (
-            self.get_queryset()
-            .by_author(author)
-            .comment_count()
-        )
+        return self.get_queryset().by_author(author).comment_count()

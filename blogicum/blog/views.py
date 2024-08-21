@@ -1,15 +1,16 @@
-from django.contrib.auth.decorators import login_required  # type: ignore
-from django.contrib.auth.models import User  # type: ignore
-from django.core.paginator import Paginator  # type: ignore
-from django.shortcuts import get_object_or_404  # type: ignore
-from django.shortcuts import redirect, render  # type: ignore
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect, render
 
 from blog.forms import CommentForm, PostForm, UserForm
 from blog.models import Category, Comment, Post
+from constants import POSTS_PER_PAGE
 
 
-def paginate_query(request, queryset, per_page=10):
-    return Paginator(queryset, per_page).get_page(request.GET.get("page"))
+def paginate_query(request, queryset, per_page=POSTS_PER_PAGE):
+    return Paginator(queryset, per_page).get_page(request.GET.get('page'))
 
 
 def index(request):
@@ -21,17 +22,14 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post.postobj.all(), id=post_id)
     if not post.author == request.user:
         post = get_object_or_404(Post.postobj.get_pub(), id=post_id)
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            return redirect('blog:post_detail', pk=post_id)
-    else:
-        form = CommentForm()
-    comments = post.comments.select_related("author").filter(is_published=True)
+    form = CommentForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.author = request.user
+        comment.save()
+        return redirect('blog:post_detail', pk=post_id)
+    comments = post.comments.select_related('author').filter(is_published=True)
     context = {'post': post, 'comments': comments, 'form': form}
     return render(request, 'blog/detail.html', context)
 
@@ -99,7 +97,6 @@ def edit_profile(request):
 
 @login_required
 def add_comment(request, post_id):
-    # post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST)
     if form.is_valid():
         comment = form.save(commit=False)
