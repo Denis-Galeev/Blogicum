@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, render
 
 from blog.forms import CommentForm, PostForm, UserForm
-from blog.models import Category, Comment, Post
+from blog.models import Category, Comment, Post, User
 from constants import POSTS_PER_PAGE
 
 
@@ -81,8 +80,7 @@ def profile(request, username):
         posts = Post.postobj.get_for_profile(user)
     else:
         posts = Post.postobj.get_for_profile_auth(user)
-    page_obj = paginate_query(request, posts)
-    context = {'profile': user, 'page_obj': page_obj}
+    context = {'profile': user, 'page_obj': paginate_query(request, posts)}
     return render(request, 'blog/profile.html', context)
 
 
