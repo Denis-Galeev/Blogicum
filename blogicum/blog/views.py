@@ -21,15 +21,8 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post.postobj.all(), id=post_id)
     if not post.author == request.user:
         post = get_object_or_404(Post.postobj.get_pub(), id=post_id)
-    form = CommentForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        comment = form.save(commit=False)
-        comment.post = post
-        comment.author = request.user
-        comment.save()
-        return redirect('blog:post_detail', pk=post_id)
-    comments = post.comments.select_related('author').filter(is_published=True)
-    context = {'post': post, 'comments': comments, 'form': form}
+    comments = post.comments.select_related('author')
+    context = {'post': post, 'comments': comments, 'form': CommentForm()}
     return render(request, 'blog/detail.html', context)
 
 

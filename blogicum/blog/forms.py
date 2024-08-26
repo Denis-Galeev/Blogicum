@@ -1,9 +1,8 @@
-from django.contrib.auth.models import User
 from django.forms import DateTimeInput, ModelForm, Textarea
 from django.utils.timezone import localtime, now
 
 from constants import COMMENT_WINDOW_SIZE
-from blog.models import Comment, Post
+from blog.models import Comment, Post, User
 
 
 class PostForm(ModelForm):
