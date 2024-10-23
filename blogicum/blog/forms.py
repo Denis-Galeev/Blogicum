@@ -6,8 +6,13 @@ from blog.models import Comment, Post, User
 
 
 class PostForm(ModelForm):
+    """Форма для создания и редактирования поста."""
 
     def __init__(self, *args, **kwargs):
+        """
+        Инициализирует форму,
+        задавая начальное значение для даты публикации.
+        """
         super().__init__(*args, **kwargs)
         self.fields['pub_date'].initial = localtime(
             now()).strftime('%Y-%m-%dT%H:%M')
@@ -24,6 +29,7 @@ class PostForm(ModelForm):
 
 
 class CommentForm(ModelForm):
+    """Форма для добавления комментария к посту."""
 
     class Meta:
         model = Comment
@@ -34,6 +40,8 @@ class CommentForm(ModelForm):
 
 
 class UserForm(ModelForm):
+    """Форма для редактирования профиля пользователя."""
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'email')

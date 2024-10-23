@@ -10,8 +10,9 @@ User = get_user_model()
 
 class BaseModel(models.Model):
     """
-    Абстрактная модель.
-    Добавляет к модели дату создания и Флаг «опубликовано».
+    Абстрактная модель, добавляющая поля:
+    - 'is_published': флаг, указывающий на опубликованость.
+    - 'created_at': дата создания записи.
     """
 
     is_published = models.BooleanField(
@@ -30,6 +31,8 @@ class BaseModel(models.Model):
 
 
 class Category(BaseModel):
+    """Модель категории для постов."""
+
     title = models.CharField(
         max_length=MAX_LENGTH_FIELD,
         verbose_name='Заголовок'
@@ -53,6 +56,8 @@ class Category(BaseModel):
 
 
 class Location(BaseModel):
+    """Модель местоположения для постов."""
+
     name = models.CharField(
         max_length=MAX_LENGTH_FIELD,
         verbose_name='Название места'
@@ -67,6 +72,8 @@ class Location(BaseModel):
 
 
 class Post(BaseModel):
+    """Модель поста."""
+
     title = models.CharField(
         max_length=MAX_LENGTH_FIELD,
         verbose_name='Заголовок'
@@ -115,10 +122,13 @@ class Post(BaseModel):
         return self.title
 
     def get_absolute_url(self):
+        """Возвращает URL для детального просмотра поста."""
         return reverse('blog:post_detail', kwargs={'pk': self.pk})
 
 
 class Comment(BaseModel):
+    """Модель комментария к посту."""
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -137,4 +147,5 @@ class Comment(BaseModel):
         default_related_name = 'comments'
 
     def __str__(self):
+        """Возвращает обрезанный текст комментария для отображения."""
         return self.text[:LENGTH_COMMENT_FIELD]
